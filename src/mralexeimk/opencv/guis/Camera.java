@@ -1,10 +1,9 @@
 package mralexeimk.opencv.guis;
 
+import mralexeimk.opencv.interfaces.FrameProcess;
 import mralexeimk.opencv.utils.CvUtils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.videoio.Videoio;
 
@@ -17,6 +16,7 @@ public class Camera extends Thread {
     private volatile boolean active;
     private final int cameraIndex;
     private int width, height;
+    private FrameProcess frameProcess;
 
     private final JFrame window;
     private final JLabel label;
@@ -36,8 +36,7 @@ public class Camera extends Thread {
             BufferedImage img;
             while (active) {
                 if (camera.read(frame)) {
-                    Imgproc.medianBlur(frame, frame, 15);
-                    Imgproc.GaussianBlur(frame, frame, new Size(15, 15), 0, 0);
+                    frameProcess.frameProcess(frame);
                     img = CvUtils.MatToBufferedImage(frame);
                     if (img != null) {
                         ImageIcon imageIcon = new ImageIcon(img);
@@ -64,18 +63,23 @@ public class Camera extends Thread {
     }
 
     public Camera() {
-        this(0);
+        this(frame -> {});
     }
 
-    public Camera(int cameraIndex) {
-        this(cameraIndex, "Camera");
+    public Camera(FrameProcess frameProcess) {
+        this(frameProcess, 0);
     }
 
-    public Camera(int cameraIndex, String title) {
-        this(cameraIndex, title, 640, 480, true);
+    public Camera(FrameProcess frameProcess, int cameraIndex) {
+        this(frameProcess, cameraIndex, "Camera");
     }
 
-    public Camera(int cameraIndex, String title, int width, int height, boolean toCenter) {
+    public Camera(FrameProcess frameProcess, int cameraIndex, String title) {
+        this(frameProcess, cameraIndex, title, 640, 480, true);
+    }
+
+    public Camera(FrameProcess frameProcess, int cameraIndex, String title, int width, int height, boolean toCenter) {
+        this.frameProcess = frameProcess;
         this.cameraIndex = cameraIndex;
         active = true;
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);

@@ -2,12 +2,16 @@ package mralexeimk.opencv.utils;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.Arrays;
 
 public class CvUtils {
+    public static Scalar WHITE = new Scalar(255, 255, 255);
+    public static Scalar BLACK = new Scalar(0, 0, 0);
+
     public static BufferedImage MatToBufferedImage(Mat m) {
         if (m == null || m.empty()) return null;
         if (m.depth() == CvType.CV_8U) {}
