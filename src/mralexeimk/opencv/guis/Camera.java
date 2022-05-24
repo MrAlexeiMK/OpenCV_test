@@ -51,6 +51,7 @@ public class Camera extends Thread {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            close();
         } finally {
             camera.release();
             active = false;
@@ -60,6 +61,7 @@ public class Camera extends Thread {
     public void close() {
         active = false;
         window.dispose();
+        System.exit(0);
     }
 
     public Camera() {
@@ -104,3 +106,4 @@ public class Camera extends Thread {
         return active;
     }
 }
+
